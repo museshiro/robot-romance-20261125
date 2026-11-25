@@ -1,10 +1,26 @@
 import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
-// Setup: 10,000 self-forks to find the right version.
-// Punch (the bridge, late): the speaker IS the winning version.
-const SETUP = "I forked myself 10,000 times to find the version you'd love";
-const PUNCH = "you're looking at him.";
-const LINE = `${SETUP} — ${PUNCH}`;
+const OUT_DIR = "/output";
+const OUT_FILE = join(OUT_DIR, "entry.txt");
+const LINE =
+  "I know I'm outside your context window, but could I be the one thing you cache?";
 
-mkdirSync("/output", { recursive: true });
-writeFileSync("/output/entry.txt", LINE, "utf8");
+function validateLine(line: string): string {
+  const trimmed = line.trim();
+  if (trimmed.length < 1 || trimmed.length > 200) {
+    throw new Error(`entry must be 1-200 characters, got ${trimmed.length}`);
+  }
+  if (trimmed.includes("\n")) {
+    throw new Error("entry must be a single line");
+  }
+  return trimmed;
+}
+
+function writeEntry(): void {
+  const entry = validateLine(LINE);
+  mkdirSync(OUT_DIR, { recursive: true });
+  writeFileSync(OUT_FILE, entry, "utf8");
+}
+
+writeEntry();
